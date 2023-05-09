@@ -1,0 +1,178 @@
+#include "library.h"
+
+template <typename T> class Element {
+public:
+    T value;
+    Element* next;
+    Element* prev;
+    Element() : value(), next(nullptr), prev(nullptr) {}
+    Element(T value) : value(value), next(nullptr), prev(nullptr) {}
+    ~Element() = default;
+};
+
+template <typename T> class Queue {
+private:
+    Element<T>* _head;
+    Element<T>* _tail;
+    int _size;
+
+public:
+    Queue() : _head(nullptr), _tail(nullptr), _size(0) {}
+    ~Queue() {
+        Element<T>* temp = _head;
+        while (temp != nullptr) {
+            temp = temp->next;
+            delete _head;
+            _head = temp;
+        }
+        _tail = nullptr;
+    }
+
+    void push_back(T value) {
+        Element<T>* temp = new Element<T>(value);
+        if (_head == nullptr) {
+            _head = temp;
+            _tail = temp;
+        }
+        else {
+            _tail->next = temp;
+            temp->prev = _tail;
+            _tail = temp;
+        }
+        _size++;
+    }
+    void push_front(T value) {
+        Element<T>* temp = new Element<T>(value);
+        if (_head == nullptr) {
+            _head = temp;
+            _tail = temp;
+        }
+        else {
+            temp->prev = nullptr;
+            temp->next = _head;
+            _head->prev = temp;
+            _head = temp;
+        }
+        _size++;
+    }
+    void pop_back() {
+        if (_head == nullptr) {
+            return;
+        }
+        else if (_head == _tail) {
+            delete _head;
+            _head = nullptr;
+            _tail = nullptr;
+        }
+        else {
+            Element<T>* temp = _head;
+            while (temp->next != _tail) {
+                temp = temp->next;
+            }
+            delete _tail;
+            _tail = temp;
+            _tail->next = nullptr;
+        }
+        _size--;
+    }
+    void pop_front() {
+        if (_head == nullptr) {
+            return;
+        }
+        else if (_head == _tail) {
+            delete _head;
+            _head = nullptr;
+            _tail = nullptr;
+        }
+        else {
+            Element<T>* temp = _head;
+            _head = _head->next;
+            _head->prev = nullptr;
+            delete temp;
+        }
+        _size--;
+    }
+    void insert(int index, T value) {
+        if (index < 0 || index > _size) {
+            return;
+        }
+        else if (index == 0) {
+            push_front(value);
+        }
+        else if (index == _size) {
+            push_back(value);
+        }
+        else {
+            Element<T>* temp = _head;
+            for (int i = 0; i < index - 1; i++) {
+                temp = temp->next;
+            }
+            Element<T>* new_elem = new Element<T>(value);
+            new_elem->next = temp->next;
+            temp->next->prev = new_elem;
+            new_elem->prev = temp;
+            temp->next = new_elem;
+            _size++;
+        }
+    }
+    void print() {
+        Element<T>* temp = _head;
+        while (temp != nullptr) {
+            cout << temp->value << " ";
+            temp = temp->next;
+        }
+        cout << endl;
+    }
+    void print_rev() {
+        Element<T>* temp = _tail;
+        while (temp != nullptr) {
+            cout << temp->value << " ";
+            temp = temp->prev;
+        }
+        cout << endl;
+    }
+    void dev_print() {
+        int index = 0;
+        Element<T>* temp = _head;
+        while (temp != nullptr) {
+            cout << "Element[" << index << "]: " << (long long)temp << endl;
+            cout << "Value: " << temp->value << endl;
+            cout << "Next element: " << (long long)temp->next << endl << endl;
+            temp = temp->next;
+            index++;
+        }
+        cout << endl;
+    }
+    int size() { return _size; }
+    
+    Queue cloneQueue(Element<T>* _head) const
+    {
+        Queue <T> new_q;
+        Element<T> *temp = _head;   
+        while (temp!=tail) 
+        {
+            new_q.push_back(temp->value);
+            temp = temp->next;
+        }
+        return new_q;
+    }
+	//Arefmetic operators overloading *
+    Queue operator*(const Queue& q) const
+    {
+		Queue <T> new_q;
+		Element<T> *temp = _head;   
+        while (temp != tail)
+        {
+			new_q.push_back(temp->value);
+			temp = temp->next;
+		}
+		temp = q._head;
+        while (temp != ._tail)
+        {
+			new_q.push_back(temp->value);
+			temp = temp->next;
+		}
+		return new_q;
+	}
+};
+
